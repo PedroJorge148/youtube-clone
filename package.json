@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "dev:all": "concurrently \"bun dev:webhook\" \"bun dev\"",
+    "dev": "next dev --turbopack",
+    "dev:webhook": "ngrok http --url=humpback-secure-lemur.ngrok-free.app 3000",
     "db:push": "bunx drizzle-kit push",
     "db:studio": "bunx drizzle-kit studio"
   },
@@ -25,6 +27,7 @@
     "next": "15.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "svix": "^1.61.2",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.24.2"
@@ -35,6 +38,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.1.2",
     "drizzle-kit": "^0.30.5",
     "tailwindcss": "^4",
     "tsx": "^4.19.3",
