@@ -36,13 +36,8 @@
     "react-dom": "^19.0.0",
     "react-error-boundary": "5.0.0",
     "server-only": "^0.0.1",
-<<<<<<< HEAD
-    "superjson": "^2.2.2",
-    "svix": "1.45.1",
-=======
     "superjson": "2.2.2",
     "svix": "^1.61.2",
->>>>>>> 753ee0a730639a84c9fb8c766e3ea0c64eb8c0a0
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.24.2"
