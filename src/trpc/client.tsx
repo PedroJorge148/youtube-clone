@@ -1,16 +1,16 @@
 'use client'
 // ^-- to make sure we can mount the Provider from a server component
+import { useState } from 'react'
+import superjson from 'superjson'
+
 import type { QueryClient } from '@tanstack/react-query'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { httpBatchLink } from '@trpc/client'
 import { createTRPCReact } from '@trpc/react-query'
-import { useState } from 'react'
-import superjson from 'superjson'
 import { makeQueryClient } from './query-client'
 import type { AppRouter } from './routers/_app'
 
 export const trpc = createTRPCReact<AppRouter>()
-
 let clientQueryClientSingleton: QueryClient
 
 function getQueryClient() {
@@ -19,13 +19,11 @@ function getQueryClient() {
     return makeQueryClient()
   }
   // Browser: use singleton pattern to keep the same query client
-  // biome-rule-off
   return (clientQueryClientSingleton ??= makeQueryClient())
 }
 function getUrl() {
   const base = (() => {
     if (typeof window !== 'undefined') return ''
-    // Modfify for outside-vercel deployment
     if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
     return 'http://localhost:3000'
   })()
