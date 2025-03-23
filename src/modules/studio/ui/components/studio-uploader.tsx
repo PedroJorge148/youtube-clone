@@ -18,6 +18,7 @@ export function StudioUploder({ onSuccess, endpoint }: StudioUploderProps) {
   return (
     <div>
       <MuxUploader
+        onSuccess={onSuccess}
         endpoint={endpoint}
         id={UPLOAD_ID}
         className="hidden group/uploader"
@@ -46,10 +47,7 @@ export function StudioUploder({ onSuccess, endpoint }: StudioUploderProps) {
           className="text-sm"
           type="percentage"
         />
-        <MuxUploaderProgress
-          muxUploader={UPLOAD_ID}
-          type="bar"
-        />
+        <MuxUploaderProgress muxUploader={UPLOAD_ID} type="bar" />
       </MuxUploaderDrop>
     </div>
   )
