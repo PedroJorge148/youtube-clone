@@ -9,8 +9,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+
 import { DEFAULT_LIMIT } from '@/constants'
+import { VideoThumbnail } from '@/modules/videos/ui/components/video-thumbnail'
 import { trpc } from '@/trpc/client'
+
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -58,7 +61,18 @@ function VideosSectionSuspense() {
                   legacyBehavior
                 >
                   <TableRow className="cursor-pointer">
-                    <TableCell>{video.title}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-4">
+                        <div className="relative aspect-video w-36 shrink-0">
+                          <VideoThumbnail
+                            title={video.title}
+                            duration={video.duration || 0}
+                            imageUrl={video.thumbnailUrl}
+                            previewUrl={video.previewUrl}
+                          />
+                        </div>
+                      </div>
+                    </TableCell>
                     <TableCell>Visibility</TableCell>
                     <TableCell>Status</TableCell>
                     <TableCell>Date</TableCell>
