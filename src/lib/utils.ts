@@ -12,6 +12,7 @@ export function formatDuration(duration: number) {
 }
 
 export function snakeCaseToTitle(str: string) {
+  // asset_ready => Asset Ready
   return str
     .replace(/_/g, ' ')
     .replace(/\b\w/g, char => char.toLocaleUpperCase())
