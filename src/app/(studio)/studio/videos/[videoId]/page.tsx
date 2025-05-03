@@ -7,10 +7,11 @@ interface VideoPageProps {
   params: Promise<{ videoId: string }>
 }
 
-export async function VideoPage({ params }: VideoPageProps) {
+export default async function VideoPage({ params }: VideoPageProps) {
   const { videoId } = await params
 
-  void trpc.studio.getOne({ id: videoId })
+  void trpc.studio.getOne.prefetch({ id: videoId })
+  void trpc.categories.getMany.prefetch()
 
   return (
     <HydrateClient>

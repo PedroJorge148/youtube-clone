@@ -1,3 +1,5 @@
+import { FormSection } from "../sections/form-section";
+
 interface VideoViewProps {
   videoId: string;
 }
@@ -5,7 +7,7 @@ interface VideoViewProps {
 export function VideoView({videoId}: VideoViewProps) {
   return (
     <div className="px-4 pt-2.5 max-w-screen-lg">
-      {videoId}
+      <FormSection videoId={videoId} />
     </div>
   )
 }
