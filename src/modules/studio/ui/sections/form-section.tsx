@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
+  Form,
   FormControl,
   FormField,
   FormItem,
@@ -24,13 +25,20 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { videoUpdateSchema } from '@/db/schema'
+import { VideoPlayer } from '@/modules/videos/ui/components/video-player'
 import { trpc } from '@/trpc/client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { MoreVerticalIcon, TrashIcon } from 'lucide-react'
-import { Suspense } from 'react'
+import {
+  CopyCheckIcon,
+  CopyIcon,
+  MoreVerticalIcon,
+  TrashIcon,
+} from 'lucide-react'
+import Link from 'next/link'
+import { Suspense, useState } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { Form, useForm } from 'react-hook-form'
-import { toast } from "sonner"
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import type { z } from 'zod'
 
 interface FormSectionProps {
@@ -60,10 +68,11 @@ function FormSectionSuspense({ videoId }: FormSectionProps) {
     onSuccess: () => {
       utils.studio.getMany.invalidate()
       utils.studio.getOne.invalidate({ id: videoId })
+      toast.success('Video updated!')
     },
     onError: () => {
-      toast.error("")
-    }
+      toast.error('Something went wrong')
+    },
   })
 
   const form = useForm<z.infer<typeof videoUpdateSchema>>({
@@ -73,6 +82,19 @@ function FormSectionSuspense({ videoId }: FormSectionProps) {
 
   function onSubmit(data: z.infer<typeof videoUpdateSchema>) {
     update.mutate(data)
+  }
+
+  // TODO Change if deploying outside of Vercel
+  const fullUrl = `${process.env.VERCEL_URL || 'http://localhost:3000'}/videos/${video.id}`
+  const [isCopied, setIsCopied] = useState(false)
+
+  async function onCopy() {
+    await navigator.clipboard.writeText(fullUrl)
+    setIsCopied(true)
+
+    setTimeout(() => {
+      setIsCopied(false)
+    }, 2000)
   }
 
   return (
@@ -128,7 +150,7 @@ function FormSectionSuspense({ videoId }: FormSectionProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Title
+                    Description
                     {/* TODO: Add AI generate button */}
                   </FormLabel>
                   <FormControl>
@@ -150,15 +172,12 @@ function FormSectionSuspense({ videoId }: FormSectionProps) {
               name="categoryId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    Title
-                    {/* TODO: Add AI generate button */}
-                  </FormLabel>
+                  <FormLabel>Category</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value ?? undefined}
                   >
-                    <FormControl>
+                    <FormControl className="w-full">
                       <SelectTrigger>
                         <SelectValue placeholder="Select a category" />
                       </SelectTrigger>
@@ -171,11 +190,42 @@ function FormSectionSuspense({ videoId }: FormSectionProps) {
                       ))}
                     </SelectContent>
                   </Select>
-
                   <FormMessage />
                 </FormItem>
               )}
             />
+          </div>
+          <div className="flex flex-col gap-8 lg:col-span-2">
+            <div className="flex flex-col gap-4 bg-[#F9F9F9] rounded-xl overflow-hidden h-fit">
+              <div className="aspect-video overflow-hidden relative">
+                <VideoPlayer
+                  playbackId={video.muxPlaybackId}
+                  thumbnailUrl={video.thumbnailUrl}
+                />
+              </div>
+              <div className="p-4 flex flex-col gap-6">
+                <div className="flex justify-between items-center gap-2">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-muted-foreground text-xs">Video link</p>
+                    <div className="flex items-center gap-2">
+                      <Link href={`videos/${video.id}`}>
+                        <p className="line-clamp-1">{fullUrl}</p>
+                      </Link>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="shrink-0 transition"
+                        onClick={onCopy}
+                        disabled={isCopied}
+                      >
+                        {isCopied ? <CopyCheckIcon /> : <CopyIcon />}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </form>
